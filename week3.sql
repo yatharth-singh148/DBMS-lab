@@ -1,24 +1,26 @@
-create database bankdata1;
-use bankdata1;
-create table Branch(branch_name varchar(30), branch_city varchar(20), assets real);
-create table BankAccount(accno int, branch_name varchar(30), balance real);
-create table BankCustomer(customer_name varchar(30), customer_street varchar(30), customer_city varchar(20));
-create table Depositer(customer_name varchar(20), accno int);
-create table Loan(loan_number int, branch_name varchar(30), amount real);
-insert into Branch values(('SBIChamrajpet', 'Bangalore', 50000), 
-('SBIResidencyRoad', 'Bangalore', 10000), 
-('SBIShivajiRoad', 'Bombay', 20000), 
-('SBIParlimentRoad', 'Delhi', 10000), 
-('SBIJantarmantar', 'Delhi', 20000));
-insert into BankAccount values((1,'SBIChamrajpet',2000),
-(2,'SBIResidencyRoad',5000),
-(3,'SBIShivajiRoad',6000),
-(4,'SBIParlimentRoad',9000),
-(5,'SBIJantarMantar',8000),
-(6,'SBIShivajiRoad',4000),
-(8,'SBIResidencyRoad',4000),
-(9,'SBIParlimentRoad',3000),
-(10,'SBIResidencyRoad',5000),(11,'SBIJantarmantar',2000));
+create database bank1;
+use bank1;
+create table Branch(branch_name varchar(30), branch_city varchar(20), assets real, primary key(branch_name));
+create table BankAccount(accno int, branch_name varchar(30), balance real, primary key(accno), foreign key(branch_name) references Branch (branch_name));
+create table BankCustomer(customer_name varchar(30), customer_street varchar(30), customer_city varchar(20), primary key(customer_name));
+create table Depositer(customer_name varchar(20), accno int, foreign key(customer_name) references BankCustomer(customer_name), foreign key (accno) references BankAccount (accno));
+create table Loan(loan_number int, branch_name varchar(30), amount real, primary key(loan_number), foreign key(branch_name) references Branch(branch_name));
+create table borrower(customer_name varchar(30), loan_number int, foreign key(customer_name) references BankCustomer(customer_name), foreign key(loan_number) references Loan(loan_number));
+insert into Branch values('SBIChamrajpet', 'Bangalore', 50000); 
+insert into Branch values('SBIResidencyRoad', 'Bangalore', 10000); 
+insert into Branch values('SBIShivajiRoad', 'Bombay', 20000); 
+insert into Branch values('SBIParlimentRoad', 'Delhi', 10000); 
+insert into Branch values('SBIJantarmantar', 'Delhi', 20000);
+insert into BankAccount values(1,'SBIChamrajpet',2000);
+insert into BankAccount values(2,'SBIResidencyRoad',5000);
+insert into BankAccount values(3,'SBIShivajiRoad',6000);
+insert into BankAccount values(4,'SBIParlimentRoad',9000);
+insert into BankAccount values(5,'SBIJantarMantar',8000);
+insert into BankAccount values(6,'SBIShivajiRoad',4000);
+insert into BankAccount values(8,'SBIResidencyRoad',4000);
+insert into BankAccount values(9,'SBIParlimentRoad',3000);
+insert into BankAccount values(10,'SBIResidencyRoad',5000);
+insert into BankAccount values(11,'SBIJantarmantar',2000);
 insert into BankCustomer values('Avinash','Bull_Temple_Road','Bangalore');
 insert into BankCustomer values('Dinesh','Bannergatta_Road','Bangalore');
 insert into BankCustomer values('Mohan','NationalCollege_Road','Bangalore');
@@ -37,3 +39,17 @@ insert into Loan values(2,'SBIResidencyRoad',2000);
 insert into Loan values(3,'SBIShivajiRoad',3000);
 insert into Loan values(4,'SBIParlimentRoad',4000);
 insert into Loan values(5,'SBIJantarmantar',5000);
+insert into borrower values('Avinash',1);
+insert into borrower values('Dinesh',2);
+insert into borrower values('Mohan',3);
+insert into borrower values('Nikil',4);
+insert into borrower values('Ravi',5); 
+select * from borrower;
+select branch_name, assets as "Assets in Lakhs" from Branch;
+select customer_name from BankAccount ba join BankCustomer bc ON ba.customer_name=bc.customer_name group by ba.customer_name, ba.branch_name having count(ba.accno)>=2 and ba.branch_name='SBIResidencyRoad';
+create view branchLoanSums as select l.branch_name,
+sum(l.amount) as total_loan_amount from Loan l group by l.branch_name;
+select * from branchLoanSums;
+
+#week4
+select c.customer_name from BankCustomer, join Depositer d on c.customer_name=d.customer_name, join BankAccount a on d.accno=a.accno, join Branch on a.branch_name = r.branch_name
