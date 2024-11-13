@@ -36,3 +36,4 @@ insert into incentives values(1111,"2024-03-05",100000);
 insert into incentives values(1113,"2024-06-07",150000);
 insert into incentives values(1115,"2024-05-08",100000);
 insert into incentives values(1116,"2024-05-09",120000);
+select empno from assignedTo where pno in(select pno from project where ploc = "Bangalore" or "Mysuru" or "Hyderabad");
