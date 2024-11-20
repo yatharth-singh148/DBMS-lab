@@ -37,3 +37,10 @@ insert into incentives values(1113,"2024-06-07",150000);
 insert into incentives values(1115,"2024-05-08",100000);
 insert into incentives values(1116,"2024-05-09",120000);
 select empno from assignedTo where pno in(select pno from project where ploc = "Bangalore" or "Mysuru" or "Hyderabad");
+select empno from employee where empno not in(select empno from incentives);
+select E.ename, E.empno, A.job_role, d.dname, d.dloc as Dept_loc, p.ploc as Proj_Loc
+from employee E
+join department d on E.deptno = d.deptno
+join assignedTo A on E.empno = A.empno
+join project p on A.pno = p.pno
+where d.dloc = p.ploc;
